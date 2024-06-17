@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  ParseUUIDPipe,
+  Param,
+} from '@nestjs/common';
+import { SerializerInterceptor } from 'src/interceptors/serializer';
 import { AuthUser } from 'src/common/decorators/user.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ConversationDto } from './dto/conversation.dto';
@@ -18,6 +30,19 @@ export class ConversationController {
     return this.conversationService.createConversation(conversationDto, user);
   }
 
+  @Get()
+  @UseInterceptors(ClassSerializerInterceptor, SerializerInterceptor)
+  getLoggedInUserConversations(@AuthUser() user: IUser) {
+    return this.conversationService.getConversations(user);
+  }
+
+  @Get(':id')
+  getConversationParticipants(
+    @Param('id', ParseUUIDPipe) id: string,
+    @AuthUser() user: IUser,
+  ) {
+    return this.conversationService.getConversationPeopleById(id, user);
+  }
   @Delete()
   async deleteAllConversations() {
     return this.conversationService.deleteAllConversations();
