@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     String                @id @default(cuid())
+  email                  String                @unique
+  fullName               String?
+  username               String                @unique
+  password               String
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+  conversationsCreated   Conversation[]        @relation("creator")
+  conversationsRecepient Conversation[]        @relation("recipient")
+  conversationMessages   ConversationMessage[]
+  friendRequestsSent     FriendRequest[]       @relation("FriendRequestToSender")
+  friendRequestsReceived FriendRequest[]       @relation("FriendRequestToReceiver")
+  friends                Friendship[]          @relation("FriendshipUserA")
+  friendOf               Friendship[]          @relation("FriendshipUserB")
+}
+
+model FriendRequest {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  senderId   String
+  receiverId String
+  sender     User     @relation("FriendRequestToSender", fields: [senderId], references: [id])
+  receiver   User     @relation("FriendRequestToReceiver", fields: [receiverId], references: [id])
+}
+
+enum RequestStatus {
+  blocked
+  pending
+  accepted
+}
+
+model Friendship {
+  id         String        @id @default(uuid())
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  senderId   String
+  receiverId String
+  sender     User          @relation("FriendshipUserA", fields: [senderId], references: [id])
+  receiver   User          @relation("FriendshipUserB", fields: [receiverId], references: [id])
+  status     RequestStatus @default(pending)
+}
+
+model Conversation {
+  id          String                @id @default(cuid())
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  messages    ConversationMessage[] @relation("conversation")
+  creatorId   String
+  recipientId String
+  creator     User                  @relation("creator", fields: [creatorId], references: [id])
+  recipient   User                  @relation("recipient", fields: [recipientId], references: [id])
+}
+
+model ConversationMessage {
+  id             Int          @id @default(autoincrement())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  content        String
+  senderId       String
+  conversationId String
+  sender         User         @relation(fields: [senderId], references: [id])
+  conversation   Conversation @relation("conversation", fields: [conversationId], references: [id])
+}

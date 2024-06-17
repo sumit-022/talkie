@@ -1,0 +1,20 @@
+{
+  "name": "talkie",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"yarn workspace server dev\" \"yarn workspace client dev\"",
+    "postinstall": "yarn workspace server prisma generate && yarn workspace client prisma generate",
+    "prisma-migrate-dev": "docker-compose exec server yarn prisma migrate dev --preview-feature",
+    "prisma-migrate-deploy": "docker-compose exec server yarn prisma migrate deploy --preview-feature",
+    "prisma-studio": "docker-compose exec server yarn prisma studio"
+  },
+  "devDependencies": {
+    "concurrently": "^7.0.0"
+  },
+  "dependencies": {
+    "prisma": "^5.15.0"
+  }
+}
