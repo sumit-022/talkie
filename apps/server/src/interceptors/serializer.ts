@@ -31,7 +31,7 @@ export class SerializerConversationDto {
     creator: IUser;
     creatorId: string;
     content: string;
-    id: string;
+    id: number;
     createdAt: Date;
   }[];
   @Expose({ name: 'lastMessage' })

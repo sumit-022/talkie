@@ -55,13 +55,23 @@ export class ConversationService {
           orderBy: {
             createdAt: 'asc',
           },
+          include: {
+            sender: {
+              select: {
+                fullName: true,
+                username: true,
+              },
+            },
+          },
+          skip: 0,
+          take: 10,
         },
       },
     });
     if (!conversation) {
       throw new HttpException('Conversation not found', 404);
     }
-    return conversation;
+    return conversation.messages;
   }
 
   async getConversationPeopleById(id: string, user: IUser) {

@@ -36,6 +36,13 @@ export class ConversationController {
     return this.conversationService.getConversations(user);
   }
 
+  @Get(':id/messages')
+  getConversationMessages(
+    @Param('id', ParseUUIDPipe) id: string,
+    @AuthUser() user: IUser,
+  ) {
+    return this.conversationService.getConversationMessagesById(id, user);
+  }
   @Get(':id')
   getConversationParticipants(
     @Param('id', ParseUUIDPipe) id: string,
