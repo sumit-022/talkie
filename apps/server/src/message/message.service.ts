@@ -35,5 +35,21 @@ export class MessageService {
     return message;
   }
 
-  async deleteMessage(messageId: number, user: IUser) {}
+  async deleteMessage(messageId: number, user: IUser) {
+    const message = await this.prisma.conversationMessage.findFirst({
+      where: {
+        id: messageId,
+        senderId: user.sub,
+      },
+    });
+    if (!message) {
+      throw new HttpException('Message not found', 404);
+    }
+    await this.prisma.conversationMessage.delete({
+      where: {
+        id: messageId,
+      },
+    });
+    return message;
+  }
 }
