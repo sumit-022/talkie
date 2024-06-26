@@ -12,6 +12,11 @@ export class LoginUserDto {
 }
 
 export class LoginUserResponseDto {
-  user: Omit<User, 'password'>;
+  user: {
+    id: string;
+    email: string;
+    username: string;
+    fullName: string;
+  };
   access_token: string;
 }

@@ -29,6 +29,13 @@ export class AuthService {
       where: {
         email: loginUserDto.email,
       },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        fullName: true,
+        password: true,
+      },
     });
     if (!user) {
       throw new NotFoundException('User not found');
